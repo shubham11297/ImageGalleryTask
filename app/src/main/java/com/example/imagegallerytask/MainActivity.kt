@@ -4,18 +4,17 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.imagegallerytask.adapter.RecyclerImagesAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -41,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.imagesRetrieved.observe(this, Observer {
-            if (it){
+            if (it) {
                 setRecyclerView(viewModel.imagesList)
             }
         })
@@ -50,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater.inflate(R.menu.main_menu, menu)
 
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
             menu!!.findItem(R.id.action_dark).isChecked = true
         }
 
@@ -58,9 +57,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.action_dark -> {
-                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -94,7 +93,7 @@ class MainActivity : AppCompatActivity() {
 //        })
     }
 
-    fun updateData(){
+    fun updateData() {
         isLoading = true
         val newList = fullList.subList(visible, visible + 5)
         visible += 5
@@ -104,7 +103,8 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun isNetworkConnected(context: Context): Boolean {
-        val connectivityManager: ConnectivityManager? = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        val connectivityManager: ConnectivityManager? =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
         if (connectivityManager != null) {
             val capabilities =
                 connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
@@ -122,7 +122,5 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 }
-
-//check if network is connected or not before hitting api
 
 // Link - https://github.com/shubham11297/ImageGalleryTask
