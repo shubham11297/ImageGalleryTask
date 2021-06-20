@@ -19,7 +19,7 @@ val okHttp = OkHttpClient.Builder()
 interface ApiServices {
 
     @GET("v2/list")
-    suspend fun getImagesData() : Response<ArrayList<ImagesDataItem>>
+    suspend fun getImagesData() : Response<List<ImagesDataItem>>
 
     companion object {
         val gson = Gson()

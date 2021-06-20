@@ -21,7 +21,7 @@ class RecyclerImagesAdapter(val context: Context, val imagesList: MutableList<St
         Glide
             .with(context)
             .load(imagesList[position])
-            .thumbnail(0.1f)
+            .placeholder(R.drawable.loadingshimmersq)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(holder.image)
     }

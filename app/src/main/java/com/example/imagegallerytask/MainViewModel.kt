@@ -14,12 +14,21 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
     fun fetchData(){
         Coroutines.io {
             val response = getImagesData()
-            if (response.isSuccessful){
-                response.body()?.forEach {
+            if (response!= null){
+                response.forEach {
                     imagesList.add(it.download_url) }
                 imagesRetrieved.postValue(true)
             }
 
+        }
+    }
+
+    fun getDataFromDb(){
+        Coroutines.io {
+            repository.db.imageDao.getAllData().forEach {
+                imagesList.add(it.download_url)
+            }
+            imagesRetrieved.postValue(true)
         }
     }
 

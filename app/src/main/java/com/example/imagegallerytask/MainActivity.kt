@@ -1,7 +1,16 @@
 package com.example.imagegallerytask
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -25,7 +34,11 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
-        viewModel.fetchData()
+        if (isNetworkConnected(this)) {
+            viewModel.fetchData()
+        } else {
+            viewModel.getDataFromDb()
+        }
 
         viewModel.imagesRetrieved.observe(this, Observer {
             if (it){
@@ -34,9 +47,32 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater.inflate(R.menu.main_menu, menu)
+
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+            menu!!.findItem(R.id.action_dark).isChecked = true
+        }
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_dark -> {
+                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun setRecyclerView(imagesList: MutableList<String>) {
         fullList.addAll(imagesList)
-        val list = imagesList.subList(0, visible)
+//        val list = imagesList.subList(0, visible)
         imagesAdapter = RecyclerImagesAdapter(this, imagesList)
         val layoutManager = GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false)
         recycler_view.adapter = imagesAdapter
@@ -65,4 +101,28 @@ class MainActivity : AppCompatActivity() {
         imagesAdapter?.updateRecycler(newList)
         isLoading = false
     }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager: ConnectivityManager? = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        if (connectivityManager != null) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                    return true
+                }
+            }
+        }
+        return false
+    }
 }
+
+//check if network is connected or not before hitting api
+
+// Link - https://github.com/shubham11297/ImageGalleryTask
